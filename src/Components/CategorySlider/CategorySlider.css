@@ -1,0 +1,44 @@
+.category{
+    height: 400px;
+    object-fit: fill;
+}
+.swiper {
+    width: 100%;
+    height: 90%;
+    position: relative !important;
+}
+.swiper-pagination{
+    position:absolute !important;
+    bottom:-10px !important;
+    margin-bottom: 5px;
+}
+.swiper-slide {
+    height: 95%;
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+
+}  
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+SwiperSlide{
+    background: no-repeat cover !important;
+    background-position: center center ;
+    border-radius: 20% !important;
+}

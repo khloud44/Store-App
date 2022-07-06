@@ -1,0 +1,17 @@
+.slider{
+    height: 100vh !important;
+}
+.nextButton svg ,.previousButton svg{
+    opacity: 0.5;
+    border-radius: 50%;
+    width:27px;
+    height:27px;
+    color:teal;
+    padding:5px;
+    background-color: lightgoldenrodyellow;
+    color:lavender;
+}
+.sliderImage{
+    background-size: cover !important;
+    background-position: center center ;
+}
