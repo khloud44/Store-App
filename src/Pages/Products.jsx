@@ -11,7 +11,7 @@ export default function Products() {
     useEffect(()=>{
         const getProducts = async ()=>{
             setLoading(true);
-            const response = await fetch("http://fakestoreapi.com/products");
+            const response = await fetch("https://fakestoreapi.com/products");
             let data = await response.json();
             categoryParam==="all Products"? setFilter(data) :setFilter(data.filter(product => product.category === categoryParam))
             setLoading(false);

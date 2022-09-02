@@ -9,7 +9,7 @@ const ProductTopRating = () => {
     useEffect(()=>{
         const getProducts = async ()=>{
             setLoading(true);
-            const response = await fetch("http://fakestoreapi.com/products");
+            const response = await fetch("https://fakestoreapi.com/products");
             let data = await response.json();
             setFilter(data.filter(product => product.rating.rate > 3))
             setLoading(false);
