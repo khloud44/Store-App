@@ -1,131 +1,129 @@
-import React from 'react';
-import { useNavigate} from "react-router-dom";
-import {  useState } from "react";
-import { useDispatch } from "react-redux";
-import { addUser } from "../redux/reducer/UsersSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import InputField from "../Components/InputField";
+import { NavLink, useNavigate } from "react-router-dom";
+import { addUser, getAllUsers } from "../redux/reducer/UsersSlice";
+import { useRef } from "react";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
+import { useState } from "react";
 
-const SignUp = () => {
-    const [name , setName] = useState("")
-    const [email , setEmail] = useState("")
-    const [password , setPassword] = useState("")
-    const [confirmPassword , setconfirmPassword] = useState("")
-    const [errors, setErrors] = useState([]);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    
-        
-    
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        setErrors([]);
-        if (
-        name === undefined ||
-        name.trim() === "" ||
-        email === undefined ||
-        email === "" ||
-        password === undefined ||
-        password === "" ||
-        confirmPassword === undefined ||
-        confirmPassword === ""  
-        ) {
-        return setErrors(["Please fill out all fields"]);
+export default function Login() {
+    const {users} = useSelector(state => state.users)
+    const navigate = useNavigate()
+    const disptch = useDispatch()
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm();
+    const password = useRef({});
+    password.current = watch("password", "");
+    const  [errorMessage, setErrorMessage]=useState("");
+    useEffect(()=>{
+        disptch(getAllUsers);
+        console.log(users);
+    })
+
+    const handleSubmitForm =userData => {
+        if(users.length === 0 ){
+            disptch(addUser(userData));
+            setErrorMessage("");
+            navigate("/");
+            toast.success('Successfully created!',{
+                duration:8000
+            });
+        }else{
+            for (const user of users){
+                if(user.email === userData.email){
+                    setErrorMessage("this Email already Exist"); 
+                }else{
+                    setErrorMessage("");
+                    disptch(addUser(userData));
+                    navigate("/");
+                    toast.success('Successfully created!',{
+                        duration:8000
+                    });
+                } 
+            }
         }
-        if (password.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-        return setErrors(["Email do not Valid"]);
-        }
-        if (password!== confirmPassword) {
-        return setErrors(["Passwords do not match"]);
-        }
-        const payload = {
-        id: Date.now(),
-        name: name,
-        email: email,
-        password: password,
-        };
-        dispatch(addUser(payload));
-        navigate("/login");
+        //toaser
     };
-
     return (
-            <div className="container my-5 p-3 w-md-50">
-            <h2 className="mt-5 mx-auto mb-3 fw-blod">Sign Up</h2>
-            <div className="row justify-content-center">
-                <div className="col-12 col-lg-6">
-                {errors?.map((error) => (
-                    <p className="bd-danger alert alert-danger">{error}</p>
-                ))}
-                <form onSubmit={handleSubmit} className="border p-5 shadow">
-                    <div className="mb-3">
-                        <label htmlFor="userName">Name</label>
-                        <input
-                            id="userName"
-                            type="userName"
-                            className="form-control "
-                            value ={name}
-                            onChange={(e)=>setName(e.target.value)}
-                        />
+        <div className="d-flex flex-column justify-content-center align-items-center  vh-100">
+            <h2 className="mb-3 fs-1 font-thin  text-center">
+                Sign Up
+            </h2>
+            <div className="shadow  p-5  col-lg-5 col-md-7 col-sm-10">
+                <form
+                onSubmit={handleSubmit(handleSubmitForm)}
+                className="w-100 py-3"
+                >
+                {errorMessage && 
+                    <div class="alert alert-danger" role="alert">
+                        {errorMessage}
                     </div>
-                    <div className="mb-3 ">
-                    <label htmlFor="email">Email</label>
-                    <input
-                        id="email"
-                        type="email"
-                        className="form-control p-2 "
-                        aria-describedby="emailHelp"
-                        value ={email}
-                        onChange={(e)=>setEmail(e.target.value)}
-                    />
-                    </div>
-                    <div className="mb-3 position-relative">
-                    <label htmlFor="password">Password</label>
-                    <input
-                        id="password"
-                        type={showPassword ? "text" : "password"}
-                        className="form-control p-2 "
-                        value ={password}
-                        onChange={(e)=>setPassword(e.target.value)}
-                    />
-                    <div
-                        className="text-muted px-3 py-2 position-absolute right showPassword around "
-                        onClick={() => setShowPassword(!showPassword)}
-                    >
-                        {showPassword ? (
-                        <i className="fa-solid fa-eye"></i>
-                        ) : (
-                        <i className="fa-solid fa-eye-slash"></i>
-                        )}
-                    </div>
-                    </div>
-                    <div className="mb-3 position-relative">
-                    <label htmlFor="confirmPassword">Confirm Password</label>
-                    <input
-                        id='confirmPassword'
-                        type={showConfirmPassword ? "text" : "password"}
-                        className="form-control p-2 "
-                        value ={confirmPassword}
-                        onChange={(e)=>setconfirmPassword(e.target.value)}
-                    />
-                    <div
-                        className="text-muted px-3 py-2 position-absolute right showPassword around "
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                        {showConfirmPassword ? (
-                        <i className="fa-solid fa-eye"></i>
-                        ) : (
-                        <i className="fa-solid fa-eye-slash"></i>
-                        )}
-                    </div>
-                    </div>
-                    <button type="submit" className="btn btn-primary w-100">
-                    Sign Up
-                    </button>
+                }
+                <InputField 
+                    type='name'
+                    register={register("name", {
+                        required: "Please enter your name address",
+                        pattern: {
+                            value: /^[a-zA-Z]+[ ]{0,1}[a-zA-Z]{0,}$/,
+                            message: "Invalid Name, it must be only characters",
+                        },
+                        })}
+                        errors={errors.name}
+                        placeholder="Enter your name"
+                />
+                <InputField 
+                    type='email'
+                    register={register("email", {
+                        required: "Please enter your email address",
+                        pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                            message: "Invalid E-mail",
+                        },
+                        })}
+                        errors={errors.email}
+                        placeholder="Enter your email"
+                />
+                <InputField 
+                    type='password'
+                    register={register("password", {
+                        required: "Please enter your password .",
+                        minLength: {
+                            value: 3,
+                            message: " Password must be at least 8 characters",
+                        },
+                        })}
+                        errors={errors.password}
+                        placeholder="Enter your password"
+                />
+                <InputField 
+                    type='password'
+                    rel
+                    register={register("passwordConfirmation", {
+                        required: "Password Confirmation is required",
+                        validate: (value) => {
+                            if (value !== password.current)
+                                return "Passwords do not match";
+                        },
+                        })}
+                        errors={errors.passwordConfirmation}
+                        placeholder="Re-enter your password"
+                />
+                <button
+                    value="submit"
+                    className="btn btn-primary w-100"
+                >
+                    SIGN UP<i className="fa-solid fa-arrow-right-to-bracket mx-1"></i>
+                </button>
                 </form>
-                </div>
+                Already have an account? {" "}
+                <NavLink to={'/login'}>Login</NavLink>
             </div>
-            </div>
-    )
+        </div>
+    );
 }
-
-export default SignUp
